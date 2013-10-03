@@ -55,7 +55,7 @@ pyDruid provides a python interface to the Druid analytic store. Typical usage o
     counts = query.timeseries(dataSource = dataSource, 
     	          granularity = "minute", 
     			  intervals = intervals, 
-    			  aggregations = {"count" : doubleSum("edits")}
+    			  aggregations = {"count" : doubleSum("added")}
     		      )
 
     print counts
@@ -65,7 +65,7 @@ pyDruid provides a python interface to the Druid analytic store. Typical usage o
 Ruby Applications with ruby-druid
 ---------------------------------
 
-The ruby-druid project is a Ruby connector for Druid, complete with a repl for querying Druid in a ruby shell. The project's source code is [here](https://github.com/madvertise/ruby-druid) and its gem page is [here](http://rubygems.org/gems/druid).
+The ruby-druid project is a Ruby connector for Druid, complete with a repl for querying Druid in a ruby shell. The project's source code is [here](https://github.com/madvertise/ruby-druid).
 
 To install druid, clone the repository:
 
@@ -90,3 +90,11 @@ To launch the repl, run:
 Now you can query Druid!
 
     long_sum(:added)[-7.days].granularity(:minute)
+
+To query druid in raw ruby:
+
+    bundle exec irb
+    
+    client = Druid::Client.new('', {:static_setup => { 'realtime/wikipedia' => 'http://localhost:8083/druid/v2/' }})
+    query = Druid::Query.new('realtime/wikipedia').double_sum(:added).granularity(:minute)
+    result = client.send(query)
