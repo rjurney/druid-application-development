@@ -98,3 +98,5 @@ To query druid in raw ruby:
     client = Druid::Client.new('', {:static_setup => { 'realtime/wikipedia' => 'http://localhost:8083/druid/v2/' }})
     query = Druid::Query.new('realtime/wikipedia').double_sum(:added).granularity(:minute)
     result = client.send(query)
+    puts result
+    ["2013-10-03T23:29:00.000Z":{"added"=>3124.0}, "2013-10-03T23:30:00.000Z":{"added"=>73508.0}, "2013-10-03T23:31:00.000Z":{"added"=>26791.0}, "2013-10-03T23:32:00.000Z":{"added"=>29966.0}, "2013-10-03T23:33:00.000Z":{"added"=>21450.0}]

@@ -1,0 +1,3 @@
+source 'http://rubygems.org'
+gem 'ruby-druid', :github => 'madvertise/ruby-druid'
+gem 'sinatra'
