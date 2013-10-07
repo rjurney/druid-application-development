@@ -21,9 +21,10 @@ def time_series():
     counts = query.timeseries(dataSource = dataSource, 
     	                      granularity = "minute", 
     						  intervals = intervals, 
-    						  aggregations = {"count" : doubleSum("edits")}
+    						  aggregations = {"count" : doubleSum("added")}
     					     )
     json_data = json.dumps(counts)
+    print json_data
     return render_template('index.html', counts=counts, json_data=json_data)
 
 if __name__ == "__main__":
