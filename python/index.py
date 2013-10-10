@@ -14,20 +14,25 @@ dataSource = 'webstream'
 
 query = pyDruid(demo_bard_url, endpoint)
 
-# Fetch from/to totals and list them
-@app.route("/timeseries")
-def time_series():
-
-    intervals = prepare_intervals(60)
-    print intervals
+def fetch_data():
+    intervals = prepare_intervals(600)
     counts = query.timeseries(dataSource = dataSource, 
     	                      granularity = "second", 
     						  intervals = intervals, 
     						  aggregations = {"count" : doubleSum("rows")}
     					     )
     json_data = json.dumps(counts)
-    print json_data
-    return render_template('index.html', counts=counts, json_data=json_data)
+    return json_data
+
+# Fetch from/to totals and list them
+@app.route("/time_series")
+def time_series():
+    json_data = fetch_data()
+    return render_template('index.html', json_data=json_data)
+
+@app.route("/time_series_data")
+def time_series_data():
+    return fetch_data()
 
 if __name__ == "__main__":
     app.run(debug=True)
