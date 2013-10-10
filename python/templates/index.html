@@ -132,8 +132,7 @@
 
     <div id="footer">
       <div class="container">
-        <!-- <p class="muted credit">Example courtesy <a href="http://martinbean.co.uk">Martin Bean</a> and <a href="http://ryanfait.com/sticky-footer/">Ryan Fait</a>.</p> -->
-        <p class="muted credit"><a href="http://shop.oreilly.com/product/0636920025054.do">Agile Data</a> by <a href="http://www.linkedin.com/in/russelljurney">Russell Jurney</a>, 2013
+        <p class="muted credit"><a href="http://www.linkedin.com/in/russelljurney">Russell Jurney</a>, 2013
       </div>
     </div>
     <!-- Le javascript
@@ -210,13 +209,19 @@
     function transition() {
 
     }
-        
+       
     setTimeout(function() { 
-        d3.json("/time_series_data", function(jsonData) {
-            data = jsonData;
-            transition();
+        d3.json("/time_series_data", function(jsonData) {    
+            data = [];    
+            for(var datum in jsonData) {
+                var d = {};
+                d.date = parseDate(jsonData[datum]['timestamp']);
+                d.close = jsonData[datum]['result']['count'];
+                data.push(d);
+            }
+            // Transition here
         }) 
-    }, 2000);
+    }, 1000);
     
   </script>
 </html>
