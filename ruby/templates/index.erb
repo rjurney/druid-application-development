@@ -179,7 +179,7 @@
     for(var datum in jsonData) {
         var d = {};
         d.date = parseDate(jsonData[datum]['timestamp']);
-        d.close = jsonData[datum]['result']['added'];
+        d.close = jsonData[datum]['result']['rows'];
         data.push(d);
     }
     JSON.stringify(data);

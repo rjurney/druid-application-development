@@ -18,16 +18,15 @@ query = pyDruid(demo_bard_url, endpoint)
 @app.route("/timeseries")
 def time_series():
 
-    intervals = prepare_intervals()
+    intervals = prepare_intervals(60)
     print intervals
     counts = query.timeseries(dataSource = dataSource, 
     	                      granularity = "second", 
-    	                      #intervals = ["2013-10-09T11:35:00Z/2013-10-09T23:36:00Z"],
     						  intervals = intervals, 
     						  aggregations = {"count" : doubleSum("rows")}
     					     )
     json_data = json.dumps(counts)
-    #print json_data
+    print json_data
     return render_template('index.html', counts=counts, json_data=json_data)
 
 if __name__ == "__main__":
