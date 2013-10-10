@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/rjurney/ruby-druid.git
-  revision: 0e9c4b05a412e45f3c5448ba7a298786f0f89a2d
+  revision: cd7cb744aa5efdd57178f34a3d08944f2695161e
   branch: timeseries
   specs:
     ruby-druid (0.1.0)
