@@ -2,6 +2,7 @@ from flask import Flask, render_template
 import json
 import re
 from pydruid.client import *
+from utils import *
 
 # Setup Flask
 app = Flask(__name__)
@@ -9,22 +10,24 @@ app = Flask(__name__)
 # Druid Config
 endpoint = 'druid/v2/?pretty'
 demo_bard_url =  'http://localhost:8083'
-dataSource = 'wikipedia'
-dimension = "page"
-intervals = ["2013-01-01/p1y"]
+dataSource = 'webstream'
 
 query = pyDruid(demo_bard_url, endpoint)
 
 # Fetch from/to totals and list them
 @app.route("/timeseries")
 def time_series():
+
+    intervals = prepare_intervals()
+    print intervals
     counts = query.timeseries(dataSource = dataSource, 
-    	                      granularity = "minute", 
+    	                      granularity = "second", 
+    	                      #intervals = ["2013-10-09T11:35:00Z/2013-10-09T23:36:00Z"],
     						  intervals = intervals, 
-    						  aggregations = {"count" : doubleSum("added")}
+    						  aggregations = {"count" : doubleSum("rows")}
     					     )
     json_data = json.dumps(counts)
-    print json_data
+    #print json_data
     return render_template('index.html', counts=counts, json_data=json_data)
 
 if __name__ == "__main__":
