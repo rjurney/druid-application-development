@@ -1,6 +1,7 @@
 GIT
-  remote: git://github.com/madvertise/ruby-druid.git
-  revision: da616d1fb6232f289a506f7de31f8327a77065e7
+  remote: git://github.com/rjurney/ruby-druid.git
+  revision: 0e9c4b05a412e45f3c5448ba7a298786f0f89a2d
+  branch: timeseries
   specs:
     ruby-druid (0.1.0)
       rest-client

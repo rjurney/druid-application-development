@@ -11,15 +11,17 @@ client = Druid::Client.new('', {:static_setup => { 'realtime/webstream' => 'http
 
 def fetch_data(client)
   intervals = prepare_intervals(600)
-  query = Druid::Query.new('realtime/webstream').double_sum(:rows).granularity(:second).interval(intervals)
+  puts intervals
+  query = Druid::Query.new('realtime/webstream').time_series().double_sum(:rows).granularity(:second).interval(intervals)
   result = client.send(query)
+  puts result
   jsonable = result.map {|r| {'timestamp' => r.timestamp, 'result' => r.row}}
   json = JSON.generate(jsonable)
 end
 
 get '/time_series' do
   @json = fetch_data(client)
-  puts @json
+  #puts @json
   erb :index
 end
 
