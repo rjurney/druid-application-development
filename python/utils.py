@@ -22,6 +22,9 @@ def prepare_intervals(duration):
 def prepend_anchor(counts, dt):
     # To give us an empty margin, we need a 0.0 stamped at the left-most time edge, 
     # and right at the start of our data
-    anchor = [{"timestamp": dt + ".000Z", "result": {"count": 0.0}}]
-    left_most = [{"timestamp": counts[0]['timestamp'], "result": {"count": 0.0}}]
-    return anchor + left_most + counts
+    if len(counts) > 0:
+        anchor = [{"timestamp": dt + ".000Z", "result": {"count": 0.0}}]
+        left_most = [{"timestamp": counts[0]['timestamp'], "result": {"count": 0.0}}]
+        return anchor + left_most + counts
+    else:
+        return counts
