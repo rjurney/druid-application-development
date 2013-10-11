@@ -186,7 +186,7 @@
     x.domain(d3.extent(data, function(d) { return d.date; }));
     y.domain([0, d3.max(data, function(d) { return d.close; })]);
 
-    svg.append("path")
+    var dPath = svg.append("path")
         .datum(data)
         .attr("class", "area")
         .attr("d", area);
@@ -219,9 +219,9 @@
                 d.close = jsonData[datum]['result']['count'];
                 data.push(d);
             }
-            // Transition here
+            dPath.transition().duration(0).attr("d", area(data));
         }) 
-    }, 1000);
+    }, 2000);
     
   </script>
 </html>

@@ -15,13 +15,16 @@ dataSource = 'webstream'
 query = pyDruid(demo_bard_url, endpoint)
 
 def fetch_data():
-    intervals = prepare_intervals(600)
+    [ago, now] = prepare_intervals(600)
+    intervals = [ago + "Z/" + now + "Z"]
     counts = query.timeseries(dataSource = dataSource, 
     	                      granularity = "second", 
     						  intervals = intervals, 
     						  aggregations = {"count" : doubleSum("rows")}
     					     )
+    counts = prepend_anchor(counts, ago)				     
     json_data = json.dumps(counts)
+    print json_data
     return json_data
 
 # Fetch from/to totals and list them

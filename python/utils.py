@@ -15,7 +15,10 @@ def round_time(dt=None, roundTo=1):
 def prepare_intervals(duration):
     now = round_time(datetime.datetime.utcnow())
     now_iso = now.isoformat()
-    ago = round_time(now - datetime.timedelta(seconds=duration))
+    ago = round_time(now - datetime.timedelta(seconds=duration - 1))
     ago_iso = ago.isoformat()
-    interval = [ago_iso + "Z" + "/" + now_iso + "Z"]
-    return interval
+    return [ago_iso, now_iso]
+
+def prepend_anchor(counts, dt):
+    left_most = [{"timestamp": counts[0]['timestamp'], "result": {"count": 0.0}}]
+    return [{"timestamp": dt + ".000Z", "result": {"count": 0.0}}] + left_most + counts
