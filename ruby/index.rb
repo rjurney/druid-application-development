@@ -10,11 +10,14 @@ set :views, 'templates'
 client = Druid::Client.new('', {:static_setup => { 'realtime/webstream' => 'http://localhost:8083/druid/v2/' }})
 
 def fetch_data(client)
-  intervals = prepare_intervals(600)
+  ago, now = prepare_intervals(600)
+  intervals = ago + "/" + now
   query = Druid::Query.new('realtime/webstream').time_series().double_sum(:rows).granularity(:second).interval(intervals)
   result = client.send(query)
-  jsonable = result.map {|r| {'timestamp' => r.timestamp, 'result' => r.row}}
-  json = JSON.generate(jsonable)
+  counts = result.map {|r| {'timestamp' => r.timestamp, 'result' => r.row}}
+  counts = prepend_anchor(counts, ago)
+  puts counts
+  json = JSON.generate(counts)
 end
 
 get '/time_series' do
