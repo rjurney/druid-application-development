@@ -15,10 +15,13 @@ def round_time(dt=None, roundTo=1):
 def prepare_intervals(duration):
     now = round_time(datetime.datetime.utcnow())
     now_iso = now.isoformat()
-    ago = round_time(now - datetime.timedelta(seconds=duration - 1))
+    ago = round_time(now - datetime.timedelta(seconds=duration))
     ago_iso = ago.isoformat()
     return [ago_iso, now_iso]
 
 def prepend_anchor(counts, dt):
+    # To give us an empty margin, we need a 0.0 stamped at the left-most time edge, 
+    # and right at the start of our data
+    anchor = [{"timestamp": dt + ".000Z", "result": {"count": 0.0}}]
     left_most = [{"timestamp": counts[0]['timestamp'], "result": {"count": 0.0}}]
-    return [{"timestamp": dt + ".000Z", "result": {"count": 0.0}}] + left_most + counts
+    return anchor + left_most + counts
