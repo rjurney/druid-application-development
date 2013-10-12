@@ -205,12 +205,8 @@
         .attr("dy", ".71em")
         .style("text-anchor", "end")
         .text("Clicks");
-        
-    function transition() {
-
-    }
        
-    setTimeout(function() { 
+    setInterval(function() { 
         d3.json("/time_series_data", function(jsonData) {    
             data = [];    
             for(var datum in jsonData) {
