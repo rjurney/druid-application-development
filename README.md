@@ -6,7 +6,7 @@ This project documents application development with Druid, a rockin' exploratory
 Setting up Druid
 ----------------
 
-To setup Druid and its wikipedia example, follow the instructions [here](https://github.com/metamx/druid/wiki/Tutorial%3A-A-First-Look-at-Druid).
+To setup Druid and its webstream example, follow the instructions [here](https://github.com/metamx/druid/wiki/Tutorial:-Webstream).
 
 R Applications with RDruid
 --------------------------
