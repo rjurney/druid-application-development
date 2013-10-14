@@ -47,7 +47,7 @@ pyDruid provides a python interface to the Druid analytic store. Typical usage o
     # Druid Config
     endpoint = 'druid/v2/?pretty'
     demo_bard_url =  'http://localhost:8083'
-    dataSource = 'wikipedia'
+    dataSource = 'webstream'
     intervals = ["2013-01-01/p1y"]
 
     query = pyDruid(demo_bard_url, endpoint)
@@ -55,7 +55,7 @@ pyDruid provides a python interface to the Druid analytic store. Typical usage o
     counts = query.timeseries(dataSource = dataSource, 
     	          granularity = "minute", 
     			  intervals = intervals, 
-    			  aggregations = {"count" : doubleSum("added")}
+    			  aggregations = {"count" : doubleSum("rows")}
     		      )
 
     print counts
@@ -81,7 +81,7 @@ Then install the pre-requisites:
 
 Next you'll need to copy the file dot_driplrc_example to .dripl and edit this file to include this line:
 
-    options :static_setup => { 'realtime/wikipedia' => 'http://localhost:8083/druid/v2/' }
+    options :static_setup => { 'realtime/webstream' => 'http://localhost:8083/druid/v2/' }
 
 To launch the repl, run:
 
@@ -95,8 +95,8 @@ To query druid in raw ruby:
 
     bundle exec irb
     
-    client = Druid::Client.new('', {:static_setup => { 'realtime/wikipedia' => 'http://localhost:8083/druid/v2/' }})
-    query = Druid::Query.new('realtime/wikipedia').double_sum(:added).granularity(:minute)
+    client = Druid::Client.new('', {:static_setup => { 'realtime/webstream' => 'http://localhost:8083/druid/v2/' }})
+    query = Druid::Query.new('realtime/webstream').double_sum(:rows).granularity(:minute)
     result = client.send(query)
     puts result
-    ["2013-10-03T23:29:00.000Z":{"added"=>3124.0}, "2013-10-03T23:30:00.000Z":{"added"=>73508.0}, "2013-10-03T23:31:00.000Z":{"added"=>26791.0}, "2013-10-03T23:32:00.000Z":{"added"=>29966.0}, "2013-10-03T23:33:00.000Z":{"added"=>21450.0}]
+    ["2013-10-03T23:29:00.000Z":{"rows"=>3124.0}, "2013-10-03T23:30:00.000Z":{"rows"=>73508.0}, "2013-10-03T23:31:00.000Z":{"rows"=>26791.0}, "2013-10-03T23:32:00.000Z":{"rows"=>29966.0}, "2013-10-03T23:33:00.000Z":{"rows"=>21450.0}]
