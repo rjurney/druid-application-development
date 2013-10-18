@@ -2,7 +2,6 @@
 require 'sinatra'
 require 'druid'
 require 'json'
-require './utils'
 
 set :public_folder, File.dirname(__FILE__) + '/static'
 set :views, 'templates'

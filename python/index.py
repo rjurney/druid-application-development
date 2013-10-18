@@ -2,7 +2,6 @@ from flask import Flask, render_template
 import json
 import re
 from pydruid.client import *
-from utils import *
 
 # Setup Flask
 app = Flask(__name__)
@@ -22,7 +21,6 @@ def fetch_data(start_iso_date, end_iso_date):
     						  aggregations = {"count" : doubleSum("rows")}
     					     )				     
     json_data = json.dumps(counts)
-    print json_data
     return json_data
 
 # Fetch from/to totals and list them
