@@ -20,8 +20,7 @@ def fetch_data(start_iso_date, end_iso_date):
     	                      granularity = "second", 
     						  intervals = intervals, 
     						  aggregations = {"count" : doubleSum("rows")}
-    					     )
-    #counts = prepend_anchor(counts, ago)				     
+    					     )				     
     json_data = json.dumps(counts)
     print json_data
     return json_data
@@ -29,8 +28,8 @@ def fetch_data(start_iso_date, end_iso_date):
 # Fetch from/to totals and list them
 @app.route("/time_series/<start_iso_date>/<end_iso_date>")
 def time_series(start_iso_date, end_iso_date):
-    json_data = fetch_data(start_iso_date, end_iso_date)
-    return render_template('index.html', json_data=json_data)
+    #json_data = fetch_data(start_iso_date, end_iso_date)
+    return render_template('index.html')#, json_data=json_data)
 
 @app.route("/time_series_data/<start_iso_date>/<end_iso_date>")
 def time_series_data(start_iso_date, end_iso_date):
