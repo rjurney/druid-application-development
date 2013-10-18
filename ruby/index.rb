@@ -16,8 +16,7 @@ def fetch_data(client, start_iso_date, end_iso_date)
   json = JSON.generate(counts)
 end
 
-get '/time_series/:start_iso_date/:end_iso_date' do |start_iso_date, end_iso_date|
-  @json = fetch_data(client, start_iso_date, end_iso_date)
+get '/time_series' do
   erb :index
 end
 

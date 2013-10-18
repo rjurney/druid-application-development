@@ -95,6 +95,7 @@
 
     </style>
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -137,74 +138,146 @@
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="/static/bootstrap-3.0.0/dist/js/bootstrap.min.js "></script>
+    <script src="/bootstrap-3.0.0/dist/js/bootstrap.min.js "></script>
   </body>
   <script>
+  
+    druidQuery = function(intervalStart, intervalEnd, callback) {
+        // pretend to get data from druid asynchronously
+        intervalStart = intervalStart.toISOString()
+        intervalEnd = intervalEnd.toISOString()
 
-  var margin = {top: 20, right: 20, bottom: 30, left: 50},
-      width = 960 - margin.left - margin.right,
-      height = 500 - margin.top - margin.bottom;
-
-  var parseDate = d3.time.format("%Y-%m-%dT%H:%M:%S.%LZ").parse;
-
-  var x = d3.time.scale()
-      .range([0, width]);
-
-  var y = d3.scale.linear()
-      .range([height, 0]);
-
-  var xAxis = d3.svg.axis()
-      .scale(x)
-      .orient("bottom");
-
-  var yAxis = d3.svg.axis()
-      .scale(y)
-      .orient("left");
-
-  var area = d3.svg.area()
-      .x(function(d) { return x(d.date); })
-      .y0(height)
-      .y1(function(d) { return y(d.close); });
-
-  var svg = d3.select("#main_container").append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    
-    var jsonData = <%= @json %>;
-    
-    var data = [];
-    for(var datum in jsonData) {
-        var d = {};
-        d.date = parseDate(jsonData[datum]['timestamp']);
-        d.close = jsonData[datum]['result']['rows'];
-        data.push(d);
+        // replace me with $.ajax
+        d3.json("/time_series_data/" + intervalStart + "/" + intervalEnd, function(jsonData) {    
+            callback(null, jsonData);  
+        });
     }
-    JSON.stringify(data);
 
-    x.domain(d3.extent(data, function(d) { return d.date; }));
-    y.domain([0, d3.max(data, function(d) { return d.close; })]);
+    var margin = {top: 20, right: 20, bottom: 30, left: 50},
+          width = 800 - margin.left - margin.right,
+          height = 400 - margin.top - margin.bottom;
 
-    svg.append("path")
-        .datum(data)
-        .attr("class", "area")
-        .attr("d", area);
+    var x = d3.time.scale()
+        .range([0, width]);
 
-    svg.append("g")
+    var y = d3.scale.linear()
+        .range([height, 0]);
+
+    var xAxis = d3.svg.axis()
+        .scale(x)
+        .orient("bottom");
+
+    var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient("left");
+
+    var area = d3.svg.area()
+        .x(function(d) { return x(d.date); })
+        .y0(height)
+        .y1(function(d) { return y(d.close); });
+
+    var svg = d3.select("#main_container").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    svg.append("defs").append("clipPath")
+          .attr("id", "clip")
+        .append("rect")
+          .attr("id", "clip-rect")
+          .attr("x", "0")
+          .attr("y", "0")
+          .attr("width", width)
+          .attr("height", height);
+
+    var dPath = svg.append('g')
+        .attr("clip-path", "url(#clip)")
+      .append("path")
+        .attr("class", "area");
+
+    var xAxisSel = svg.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + height + ")")
         .call(xAxis);
 
-    svg.append("g")
+    yAxisSel = svg.append("g")
         .attr("class", "y axis")
         .call(yAxis)
-      .append("text")
+
+    yAxisSel.append("text")
         .attr("transform", "rotate(-90)")
         .attr("y", 6)
         .attr("dy", ".71em")
         .style("text-anchor", "end")
         .text("Clicks");
 
+    var data = [];
+    var maxDataPoints = 20; // Max number of points to keep in the graph
+    var nextData = data;
+    var dataToShow = [];
+    setInterval(function() { 
+        data = nextData;
+
+        // Skip when nothing more to show
+        if (dataToShow.length == 0) return;
+
+        // Take on datum from the new data and add it to the data
+        // (pretend like the data is arriving one at a time)
+        data.push(dataToShow.shift());
+
+        // once we get too many things in data, remove some
+        // use nextData to train the scales but use the untrimmed data
+        // for rendering so that it looks smooth
+        nextData = data.length > maxDataPoints ? data.slice(data.length - maxDataPoints) : data;
+
+        // can not show area unless we gave min 2 points
+        if (data.length < 2) return;
+
+        // This is a key step that needs to be done because of the 
+        // paculiarity of area / line charts
+        // (they have one element that represnts N data points - unlike a bar chart) 
+        // reaply the old area function (with the old scale) to the new data
+        dPath.attr("d", area(data))        
+
+        // Update the scale domains
+        x.domain(d3.extent(nextData, function(d) { return d.date; }));
+        y.domain([0, d3.max(nextData, function(d) { return d.close; })]);
+
+        // reaply the axis selection (now that the scales have been updated)
+        // yay for transition!
+        xAxisSel.transition().duration(900).call(xAxis);        
+        yAxisSel.transition().duration(900).call(yAxis);
+
+        // reaply the updated area function to animate the area 
+        dPath.transition().duration(900).attr("d", area(data))
+
+    }, 1000);
+
+    function convert(ds) { 
+        return ds.map(function(d) {   
+            return {
+                date: new Date(d['timestamp']),
+                close: d['result']['rows']
+            }
+        });
+    }
+
+    lastQueryTime = new Date(Date.now() - 60 * 1000) // start from one minute ago
+    lastQueryTime.setUTCMilliseconds(0)
+    function doQuery() {
+        now = new Date()
+        now.setUTCMilliseconds(0)
+        console.log('query!')
+        druidQuery(lastQueryTime, now, function(err, results) {
+            // add results to the data to be shown
+            lastQueryTime = now
+            dataToShow = dataToShow.concat(convert(results)) 
+            console.log('dataToShow length', dataToShow.length)
+        })
+    }
+    doQuery()
+    setInterval(doQuery, 10000)
+    
   </script>
 </html>
