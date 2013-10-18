@@ -26,13 +26,14 @@ Go ahead and install ggplot2, so we can create charts:
 Run an example query and display it as a chart, like so:
 
     url <- druid.url(host="localhost", port="8083")
-    datasource <- "wikipedia"
+    datasource <- "webstream"
     timespan <- interval(ymd(20130101), ymd(20200101))
 
-    tsdata <- druid.query.timeseries(url=url, dataSource=datasource,
+    tsdata <- druid.query.timeseries(url=url, 
+                            dataSource=datasource,
                             intervals = timespan,
-                            aggregations = sum(metric("count")),
-                            granularity = granularity("PT1M")
+                            aggregations = sum(metric("rows")),
+                            granularity = granularity("PT1S")
     )
     
     print(ggplot(data=tsdata, aes_string(x="timestamp", y="count")) + geom_line())
