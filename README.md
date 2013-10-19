@@ -36,7 +36,7 @@ Run an example query and display it as a chart, like so:
                             granularity = granularity("PT1S")
     )
     
-    print(ggplot(data=tsdata, aes_string(x="timestamp", y="count")) + geom_line())
+    print(ggplot(data=tsdata, aes_string(x="timestamp", y="rows")) + geom_line())
 
 For more R examples, check out the R directory in this project and see the examples [here](https://github.com/metamx/RDruid/wiki/Examples).
 
