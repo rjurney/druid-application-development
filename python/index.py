@@ -11,8 +11,15 @@ endpoint = 'druid/v2/?pretty'
 demo_bard_url =  'http://localhost:8083'
 dataSource = 'webstream'
 
+# Boot a Druid 
 query = pyDruid(demo_bard_url, endpoint)
 
+# Display our HTML Template
+@app.route("/time_series")
+def time_series():
+    return render_template('index.html')
+
+# Fetch our data from Druid
 def fetch_data(start_iso_date, end_iso_date):
     intervals = [start_iso_date + "/" + end_iso_date]
     counts = query.timeseries(dataSource = dataSource, 
@@ -23,11 +30,7 @@ def fetch_data(start_iso_date, end_iso_date):
     json_data = json.dumps(counts)
     return json_data
 
-# Fetch from/to totals and list them
-@app.route("/time_series")
-def time_series():
-    return render_template('index.html')
-
+# Deliver data in JSON to our chart
 @app.route("/time_series_data/<start_iso_date>/<end_iso_date>")
 def time_series_data(start_iso_date, end_iso_date):
     return fetch_data(start_iso_date, end_iso_date)
