@@ -1,4 +1,4 @@
-# myapp.rb
+# index.rb
 require 'sinatra'
 require 'druid'
 require 'json'
